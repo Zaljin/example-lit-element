@@ -19,9 +19,12 @@ export class MyRandomMonsterEncounter extends LitElement {
   next() {
     let totalWeight = this._monsters.reduce((weight, m) => weight + m.weight, 0);
     let weightedRandom = Math.random() * totalWeight;
+    
+    this._monsters.forEach(monster => monster.el.removeAttribute('active'));
     this._monsters.some(monster => {
       if (weightedRandom < monster.weight) {
         this._activeMonster = monster;
+        monster.el.setAttribute('active', '');
         return true;
       } else {
         weightedRandom -= monster.weight;
@@ -40,13 +43,21 @@ export class MyRandomMonsterEncounter extends LitElement {
     `;
   }
 
-  _registerMonster(monster: { name: string, level: number, weight: number }) {
+  _registerMonster(monster: { id: number, name: string, level: number, weight: number }) {
     this._monsters = [...this._monsters, monster];
-    this.next();
   }
 
-  _unregisterMonster(monster: { name: string, level: number, weight: number }) {
-    this._monsters.splice(this._monsters.findIndex(m => m.name === monster.name), 0);
+  _updateMonster(monster: { id: number, name: string, level: number, weight: number }) {
+    this._monsters.splice(this._monsters.findIndex(m => m.id === monster.id), 1);
+    this._monsters = [...this._monsters, monster];
+    if (this._activeMonster && this._activeMonster.id === monster.id) {
+      this._activeMonster = monster;
+      this.requestUpdate();
+    }
+  }
+
+  _unregisterMonster(monster: { id: number, name: string, level: number, weight: number }) {
+    this._monsters.splice(this._monsters.findIndex(m => m.id === monster.id), 1);
     this._monsters = [...this._monsters];
   }
 }
