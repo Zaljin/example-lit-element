@@ -4,10 +4,6 @@ let monsterId = 0;
 
 @customElement('my-monster')
 export class MyMonster extends LitElement {
-  constructor() {
-    super();
-  }
-
   _monster = {
     id: ++monsterId,
     name: '',
@@ -16,6 +12,10 @@ export class MyMonster extends LitElement {
     treasure: [],
     el: this,
   };
+
+  get monster() {
+    return { ...this._monster };
+  }
 
   @property() set name(value: string) {
     this._monster = {
@@ -61,21 +61,16 @@ export class MyMonster extends LitElement {
     return this._monster.treasure;
   }
 
-  render() {
-    return html``;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.parentElement._registerMonster(this._monster);
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.parentElement._unregisterMonster(this._monster);
+  createRenderRoot() {
+    return this;
   }
 
   updateMonster() {
-    this.parentElement._updateMonster(this._monster);
+    const changed = new CustomEvent('updated', {
+      detail: {
+        monster: { ...this._monster },
+      }
+    });
+    this.dispatchEvent(changed);
   }
 }
