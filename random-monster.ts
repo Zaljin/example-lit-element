@@ -1,7 +1,7 @@
 import { LitElement, html, property, customElement } from "lit-element";
 
-@customElement("my-random-monster-encounter")
-export class MyRandomMonsterEncounter extends LitElement {
+@customElement("my-random-monster")
+export class MyRandomMonster extends LitElement {
   constructor() {
     super();
     this._monsterListMutations.observe(this, {
